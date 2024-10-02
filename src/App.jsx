@@ -9,7 +9,6 @@ const App = () => {
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
   const [location, setLocation] = useState("");
-  const [plazaNumber, setPlazaNumber] = useState("");
   const [mapVisible, setMapVisible] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
 
@@ -32,13 +31,22 @@ const App = () => {
     try {
       const response = await axios.post("http://localhost:3001/locations", {
         location,
-        plazaNumber,
       });
       console.log("Data submitted:", response.data);
       setLocation("");
-      setPlazaNumber("");
     } catch (error) {
       console.error("Error posting data:", error);
+    }
+  };
+
+  const handleGetLocation = () => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition((position) => {
+        const { latitude, longitude } = position.coords;
+        setLocation(`Lat: ${latitude}, Long: ${longitude}`);
+      });
+    } else {
+      alert("Geolocation is not supported by this browser.");
     }
   };
 
@@ -162,19 +170,18 @@ const App = () => {
                 onSubmit={handlePost}
                 className="flex flex-col items-center"
               >
+                <button
+                  type="button"
+                  onClick={handleGetLocation}
+                  className="bg-purple-600 text-white px-4 py-2 rounded-full border border-black hover:bg-purple-400 transition mb-4"
+                >
+                  Obtener Ubicación
+                </button>
                 <input
                   type="text"
                   placeholder="Ubicación"
                   value={location}
                   onChange={(e) => setLocation(e.target.value)}
-                  required
-                  className="border border-gray-300 rounded-lg p-2 mb-4 w-full max-w-xs"
-                />
-                <input
-                  type="number"
-                  placeholder="Número de Plaza"
-                  value={plazaNumber}
-                  onChange={(e) => setPlazaNumber(e.target.value)}
                   required
                   className="border border-gray-300 rounded-lg p-2 mb-4 w-full max-w-xs"
                 />
