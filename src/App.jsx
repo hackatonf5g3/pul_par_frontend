@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import axios from "axios";
 import logo from "./assets/logo.png";
-import mapa from "./assets/mapa.png";
 import car from "./assets/car.jpg";
+import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
+import "leaflet/dist/leaflet.css";
 
 const App = () => {
   const [isSubscribed, setIsSubscribed] = useState(false);
@@ -11,6 +12,7 @@ const App = () => {
   const [location, setLocation] = useState("");
   const [mapVisible, setMapVisible] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [coordinates, setCoordinates] = useState(null);
 
   const handleSubscription = (e) => {
     e.preventDefault();
@@ -44,6 +46,7 @@ const App = () => {
       navigator.geolocation.getCurrentPosition((position) => {
         const { latitude, longitude } = position.coords;
         setLocation(`Lat: ${latitude}, Long: ${longitude}`);
+        setCoordinates([latitude, longitude]);
       });
     } else {
       alert("Geolocation is not supported by this browser.");
@@ -161,7 +164,21 @@ const App = () => {
           {mapVisible ? (
             <div>
               <h2 className="text-2xl mb-4">Mapa de Ubicación</h2>
-              <img src={mapa} alt="Mapa" className="w-full max-w-md" />
+              <MapContainer
+                center={coordinates || [40.4160833, -3.700891]}
+                zoom={13}
+                style={{ height: "400px", width: "100%" }}
+              >
+                <TileLayer
+                  url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                  attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                />
+                {coordinates && (
+                  <Marker position={coordinates}>
+                    <Popup>Tu ubicación</Popup>
+                  </Marker>
+                )}
+              </MapContainer>
             </div>
           ) : (
             <div>
