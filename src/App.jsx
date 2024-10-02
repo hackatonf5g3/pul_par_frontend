@@ -1,15 +1,29 @@
 import React, { useState } from "react";
 import axios from "axios";
-import logo from "./logo.png"; // Asegúrate de tener un logo en esta ruta
+import logo from "./assets/logo.png"; // Asegúrate de tener un logo en esta ruta
+import mapa from "./assets/mapa.png"; // Asegúrate de tener la imagen del mapa en esta ruta
 
 const App = () => {
   const [isSubscribed, setIsSubscribed] = useState(false);
+  const [email, setEmail] = useState("");
+  const [name, setName] = useState("");
   const [location, setLocation] = useState("");
   const [plazaNumber, setPlazaNumber] = useState("");
   const [mapVisible, setMapVisible] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
 
-  const handleSubscription = () => {
-    setIsSubscribed(true);
+  const handleSubscription = (e) => {
+    e.preventDefault();
+    if (validateEmail(email)) {
+      setIsSubscribed(true);
+    } else {
+      alert("Por favor, ingresa un correo electrónico válido.");
+    }
+  };
+
+  const validateEmail = (email) => {
+    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return re.test(email);
   };
 
   const handlePost = async (e) => {
@@ -28,37 +42,120 @@ const App = () => {
   };
 
   return (
-    <div className="bg-blue-200 min-h-screen flex flex-col items-center justify-center p-4">
+    <div className="bg-purple-600 min-h-screen flex flex-col items-center justify-center p-4">
+      <nav className="w-full bg-purple-500 p-4 mb-16">
+        <div className="flex justify-between items-center">
+          <div className="text-white text-xl font-bold">Pul-Par</div>
+          <div className="md:hidden">
+            <button
+              onClick={() => setMenuOpen(!menuOpen)}
+              className="text-white focus:outline-none"
+            >
+              <svg
+                className="h-6 w-6"
+                fill="none"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  d={
+                    menuOpen ? "M6 18L18 6M6 6l12 12" : "M4 6h16M4 12h16m-7 6h7"
+                  }
+                />
+              </svg>
+            </button>
+          </div>
+        </div>
+        {menuOpen && (
+          <div className="md:hidden">
+            <a
+              href="#"
+              className="block text-white py-2 px-4 hover:bg-purple-500"
+            >
+              Contacto Grupo 3
+            </a>
+            <a
+              href="#"
+              className="block text-white py-2 px-4 hover:bg-purple-500"
+            >
+              Info Hackathon F5G3
+            </a>
+            <a
+              href="#"
+              className="block text-white py-2 px-4 hover:bg-purple-500"
+            >
+              Uso
+            </a>
+            <a
+              href="#"
+              className="block text-white py-2 px-4 hover:bg-purple-500"
+            >
+              Busca en el mapa plazas disponibles en tu ciudad si eres conductor
+            </a>
+            <a
+              href="#"
+              className="block text-white py-2 px-4 hover:bg-purple-500"
+            >
+              Ayuda a informar en donde se encuentran plazas vacías así cuidamos
+              al planeta
+            </a>
+          </div>
+        )}
+      </nav>
       {!isSubscribed ? (
-        <div className="text-center">
+        <div className="text-center mb-16">
           <img src={logo} alt="Logo" className="mb-4 w-32 mx-auto" />
-          <h1 className="text-4xl text-white font-bold mb-4">
+          <h1 className="text-3xl text-white font-bold mb-4">
             Bienvenido a Pul-Par
           </h1>
-          <button
-            onClick={handleSubscription}
-            className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-500 transition"
+          <form
+            onSubmit={handleSubscription}
+            className="flex flex-col items-center"
           >
-            Suscribirse
-          </button>
+            <input
+              type="text"
+              placeholder="Nombre"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              required
+              className="border border-gray-300 rounded-lg p-2 mb-4 w-full max-w-xs"
+            />
+            <input
+              type="email"
+              placeholder="Correo Electrónico"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              className="border border-gray-300 rounded-lg p-2 mb-4 w-full max-w-xs"
+            />
+            <button
+              type="submit"
+              className="bg-purple-600 text-white px-4 py-2 rounded-full border border-black hover:bg-purple-400 transition"
+            >
+              Suscribirse
+            </button>
+          </form>
         </div>
       ) : (
-        <div className="text-center">
-          <h1 className="text-4xl text-white font-bold mb-4">Pul-Par</h1>
+        <div className="text-center mb-16 bg-white text-purple-600 p-4 rounded-lg">
+          <h1 className="text-4xl font-bold mb-4">Pul-Par</h1>
           <button
             onClick={() => setMapVisible(!mapVisible)}
-            className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-500 transition mb-4"
+            className="bg-purple-600 text-white px-4 py-2 rounded-full border border-black hover:bg-purple-400 transition mb-4"
           >
             {mapVisible ? "Retornar a Home" : "Ver Mapa"}
           </button>
           {mapVisible ? (
             <div>
-              <h2 className="text-2xl text-white mb-4">Mapa de Ubicación</h2>
-              <p className="text-white">Mapa se mostraría aquí.</p>
+              <h2 className="text-2xl mb-4">Mapa de Ubicación</h2>
+              <img src={mapa} alt="Mapa" className="w-full max-w-md" />
             </div>
           ) : (
             <div>
-              <h2 className="text-2xl text-white mb-4">Enviar Ubicación</h2>
+              <h2 className="text-2xl mb-4">Enviar Ubicación</h2>
               <form
                 onSubmit={handlePost}
                 className="flex flex-col items-center"
@@ -81,7 +178,7 @@ const App = () => {
                 />
                 <button
                   type="submit"
-                  className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-500 transition"
+                  className="bg-purple-600 text-white px-4 py-2 rounded-full border border-black hover:bg-purple-400 transition"
                 >
                   Enviar
                 </button>
@@ -90,6 +187,9 @@ const App = () => {
           )}
         </div>
       )}
+      <footer className="w-full bg-purple-500 p-4 mt-20 text-center text-white">
+        @grupo3 - 2024
+      </footer>
     </div>
   );
 };
