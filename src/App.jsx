@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import axios from "axios";
-import logo from "./assets/logo.png"; // Asegúrate de tener un logo en esta ruta
-import mapa from "./assets/mapa.png"; // Asegúrate de tener la imagen del mapa en esta ruta
+import logo from "./assets/logo.png";
+import mapa from "./assets/mapa.png";
+import car from "./assets/car.jpg";
 
 const App = () => {
   const [isSubscribed, setIsSubscribed] = useState(false);
@@ -43,7 +44,7 @@ const App = () => {
 
   return (
     <div className="bg-purple-600 min-h-screen flex flex-col items-center justify-center p-4">
-      <nav className="w-full bg-purple-500 p-4 mb-16">
+      <nav className="w-full bg-purple-500 p-4 mb-16 rounded-md">
         <div className="flex justify-between items-center">
           <div className="text-white text-xl font-bold">Pul-Par</div>
           <div className="md:hidden">
@@ -131,6 +132,7 @@ const App = () => {
               required
               className="border border-gray-300 rounded-lg p-2 mb-4 w-full max-w-xs"
             />
+            <img src={car} alt="car" className="mb-9 mt-8 w-34 mx-auto" />
             <button
               type="submit"
               className="bg-purple-600 text-white px-4 py-2 rounded-full border border-black hover:bg-purple-400 transition"
@@ -187,7 +189,7 @@ const App = () => {
           )}
         </div>
       )}
-      <footer className="w-full bg-purple-500 p-4 mt-20 text-center text-white">
+      <footer className="w-full p-4 py-1 mt- text-center text-purple">
         @grupo3 - 2024
       </footer>
     </div>
