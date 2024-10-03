@@ -23,6 +23,7 @@ Pul-Par es una aplicación web desarrollada como parte del Hackathon de Factoria
 ```bash
 git clone https://github.com/hackatonf5g3/pul_par_frontend.git
 cd pul_par_frontend
+
 Instalar Dependencias
 
 npm install
