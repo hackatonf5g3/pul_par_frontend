@@ -15,6 +15,7 @@ const App = () => {
   const [mapVisible, setMapVisible] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [coordinates, setCoordinates] = useState(null);
+  const [locationCancelled, setLocationCancelled] = useState(false);
 
   const handleSubscription = (e) => {
     e.preventDefault();
@@ -47,8 +48,10 @@ const App = () => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition((position) => {
         const { latitude, longitude } = position.coords;
-        setLocation(`Lat: ${latitude}, Long: ${longitude}`);
+        const newLocation = `Lat: ${latitude}, Long: ${longitude}`;
+        setLocation(newLocation);
         setCoordinates([latitude, longitude]);
+        setLocationCancelled(false); // Resetea el estado de cancelado
       });
     } else {
       alert("Geolocation is not supported by this browser.");
@@ -203,8 +206,10 @@ const App = () => {
                   type="text"
                   placeholder="Ubicación"
                   value={location}
-                  onChange={(e) => setLocation(e.target.value)}
+                  // Solo se puede cambiar la ubicación desde el botón, así que no permitas cambios manuales
+                  onChange={(e) => {}} // No permitir cambios manuales
                   required
+                  disabled // Deshabilitar el campo de entrada
                   className="border border-gray-300 rounded-lg p-2 mb-14 w-full max-w-xs"
                 />
                 <button
@@ -212,6 +217,17 @@ const App = () => {
                   className="bg-purple-400 text-white px-4 py-2 rounded-full border border-black hover:bg-purple-400 transition"
                 >
                   Enviar
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setLocation(""); // Limpiar la ubicación
+                    setCoordinates(null); // Limpiar las coordenadas
+                    setLocationCancelled(true); // Marcar que la ubicación fue cancelada
+                  }}
+                  className=" text-red px-2 py-2 rounded-full border border-black hover:bg-red-400 transition mb-4 mt-7"
+                >
+                  Cancelar
                 </button>
               </form>
             </div>
