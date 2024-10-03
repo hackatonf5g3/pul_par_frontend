@@ -54,7 +54,7 @@ const App = () => {
   };
 
   return (
-    <div className="bg-purple-600 min-h-screen flex flex-col items-center justify-center p-4">
+    <div className="bg-purple-600 min-h-screen flex flex-col items-center  p-4">
       <nav className="w-full bg-purple-500 p-4 mb-16 rounded-md">
         <div className="flex justify-between items-center">
           <div className="text-white text-xl font-bold">Pul-Par</div>
@@ -120,9 +120,7 @@ const App = () => {
       {!isSubscribed ? (
         <div className="text-center mb-16">
           <img src={logo} alt="Logo" className="mb-4 w-32 mx-auto" />
-          <h1 className="text-3xl text-white font-bold mb-4">
-            Bienvenido a Pul-Par
-          </h1>
+          <h1 className="text-3xl text-white font-bold mb-4">Pul-Par</h1>
           <form
             onSubmit={handleSubscription}
             className="flex flex-col items-center"
@@ -148,7 +146,7 @@ const App = () => {
               type="submit"
               className="bg-purple-600 text-white px-4 py-2 rounded-full border border-black hover:bg-purple-400 transition"
             >
-              Suscribirse
+              Login
             </button>
           </form>
         </div>
