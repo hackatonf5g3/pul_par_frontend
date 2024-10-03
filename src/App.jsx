@@ -155,15 +155,15 @@ const App = () => {
           <h1 className="text-4xl font-bold mb-4">Pul-Par</h1>
           <button
             onClick={() => setMapVisible(!mapVisible)}
-            className="bg-purple-600 text-white px-4 py-2 rounded-full border border-black hover:bg-purple-400 transition mb-4"
+            className="bg-green-600 text-white px-10 py-2 rounded-full border border-black hover:bg-purple-400 transition mb-4"
           >
-            {mapVisible ? "Retornar a Home" : "Ver Mapa"}
+            {mapVisible ? "Retornar a Home" : "Plazas Libres"}
           </button>
           {mapVisible ? (
             <div>
-              <h2 className="text-2xl mb-4">Mapa de Ubicación</h2>
+              <h2 className="text-2xl mb-4">Plazas Libres</h2>
               <MapContainer
-                center={coordinates || [40.4160833, -3.700891]}
+                center={coordinates || [40.4160833, -3.70088]}
                 zoom={13}
                 style={{ height: "400px", width: "100%" }}
               >
@@ -173,14 +173,14 @@ const App = () => {
                 />
                 {coordinates && (
                   <Marker position={coordinates}>
-                    <Popup>Tu ubicación</Popup>
+                    <Popup>Anunciar espacios</Popup>
                   </Marker>
                 )}
               </MapContainer>
             </div>
           ) : (
             <div>
-              <h2 className="text-2xl mb-4">Enviar Ubicación</h2>
+              {/* <h2 className="text-2xl mb-4">Anunciar espacios libres de aparcamienton</h2> */}
               <form
                 onSubmit={handlePost}
                 className="flex flex-col items-center"
@@ -188,9 +188,9 @@ const App = () => {
                 <button
                   type="button"
                   onClick={handleGetLocation}
-                  className="bg-purple-600 text-white px-4 py-2 rounded-full border border-black hover:bg-purple-400 transition mb-4"
+                  className="bg-purple-500 text-white px-4 py-2 rounded-full border border-black hover:bg-purple-400 transition mb-4"
                 >
-                  Obtener Ubicación
+                  Anunciar espacios libres
                 </button>
                 <input
                   type="text"
@@ -202,7 +202,7 @@ const App = () => {
                 />
                 <button
                   type="submit"
-                  className="bg-purple-600 text-white px-4 py-2 rounded-full border border-black hover:bg-purple-400 transition"
+                  className="bg-purple-400 text-white px-4 py-2 rounded-full border border-black hover:bg-purple-400 transition"
                 >
                   Enviar
                 </button>
