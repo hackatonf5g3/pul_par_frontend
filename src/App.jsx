@@ -1,16 +1,21 @@
 import React, { useState } from "react";
 import axios from "axios";
-import logo from "./assets/logo.png"; // Asegúrate de tener un logo en esta ruta
-import mapa from "./assets/mapa.png"; // Asegúrate de tener la imagen del mapa en esta ruta
+import logo from "./assets/logo.png";
+import car from "./assets/car.jpg";
+import fondo from "./assets/fondo.png";
+
+import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
+import "leaflet/dist/leaflet.css";
 
 const App = () => {
   const [isSubscribed, setIsSubscribed] = useState(false);
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
   const [location, setLocation] = useState("");
-  const [plazaNumber, setPlazaNumber] = useState("");
   const [mapVisible, setMapVisible] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [coordinates, setCoordinates] = useState(null);
+  const [locationCancelled, setLocationCancelled] = useState(false);
 
   const handleSubscription = (e) => {
     e.preventDefault();
@@ -31,19 +36,32 @@ const App = () => {
     try {
       const response = await axios.post("http://localhost:3001/locations", {
         location,
-        plazaNumber,
       });
       console.log("Data submitted:", response.data);
       setLocation("");
-      setPlazaNumber("");
     } catch (error) {
       console.error("Error posting data:", error);
     }
   };
 
+  const handleGetLocation = () => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition((position) => {
+        const { latitude, longitude } = position.coords;
+        const newLocation = `Lat: ${latitude}, Long: ${longitude}`;
+
+        setLocation(newLocation);
+        setCoordinates([latitude, longitude]);
+        setLocationCancelled(false); // Resetea el estado de cancelado
+      });
+    } else {
+      alert("Geolocation is not supported by this browser.");
+    }
+  };
+
   return (
-    <div className="bg-purple-600 min-h-screen flex flex-col items-center justify-center p-4">
-      <nav className="w-full bg-purple-500 p-4 mb-16">
+    <div className="min-h-screen flex flex-col items-center bg-gradient-to-b from-[#5a0dad] to-[#e0b3ff]">
+      <nav className="w-full bg-purple-500 p-4 mb-16 rounded-md">
         <div className="flex justify-between items-center">
           <div className="text-white text-xl font-bold">Pul-Par</div>
           <div className="md:hidden">
@@ -107,10 +125,8 @@ const App = () => {
       </nav>
       {!isSubscribed ? (
         <div className="text-center mb-16">
-          <img src={logo} alt="Logo" className="mb-4 w-32 mx-auto" />
-          <h1 className="text-3xl text-white font-bold mb-4">
-            Bienvenido a Pul-Par
-          </h1>
+          <img src={logo} alt="Logo" className="mb-9 w-30 mx-auto" />
+
           <form
             onSubmit={handleSubscription}
             className="flex flex-col items-center"
@@ -131,67 +147,96 @@ const App = () => {
               required
               className="border border-gray-300 rounded-lg p-2 mb-4 w-full max-w-xs"
             />
+            <img src={car} alt="car" className="mb-9 mt-8 w-full h-a mx-0" />
             <button
               type="submit"
               className="bg-purple-600 text-white px-4 py-2 rounded-full border border-black hover:bg-purple-400 transition"
             >
-              Suscribirse
+              Login
             </button>
           </form>
         </div>
       ) : (
-        <div className="text-center mb-16 bg-white text-purple-600 p-4 rounded-lg">
-          <h1 className="text-4xl font-bold mb-4">Pul-Par</h1>
+        <div
+          className="text-center bg-white text-purple-600 rounded-lg w-full h-screen mb-0"
+          style={{
+            backgroundImage: `url(${fondo})`,
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+          }}
+        >
           <button
             onClick={() => setMapVisible(!mapVisible)}
-            className="bg-purple-600 text-white px-4 py-2 rounded-full border border-black hover:bg-purple-400 transition mb-4"
+            className="bg-green-600 text-white px-10 py-2 rounded-full border border-black hover:bg-purple-400 transition mb-16 mt-16"
           >
-            {mapVisible ? "Retornar a Home" : "Ver Mapa"}
+            {mapVisible ? "Retornar a Home" : "Plazas Libres"}
           </button>
           {mapVisible ? (
             <div>
-              <h2 className="text-2xl mb-4">Mapa de Ubicación</h2>
-              <img src={mapa} alt="Mapa" className="w-full max-w-md" />
+              <h2 className="text-2xl mb-4">Plazas Libres</h2>
+              <MapContainer
+                center={coordinates || [40.4160833, -3.70088]}
+                zoom={13}
+                style={{ height: "400px", width: "100%" }}
+              >
+                <TileLayer
+                  url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                  attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                />
+                {coordinates && (
+                  <Marker position={coordinates}>
+                    <Popup>Anunciar espacios</Popup>
+                  </Marker>
+                )}
+              </MapContainer>
             </div>
           ) : (
             <div>
-              <h2 className="text-2xl mb-4">Enviar Ubicación</h2>
               <form
                 onSubmit={handlePost}
                 className="flex flex-col items-center"
               >
+                <button
+                  type="button"
+                  onClick={handleGetLocation}
+                  className="bg-purple-500 text-white px-4 py-2 rounded-full border border-black hover:bg-purple-400 transition mb-9"
+                >
+                  Anunciar espacios libres
+                </button>
                 <input
                   type="text"
                   placeholder="Ubicación"
                   value={location}
-                  onChange={(e) => setLocation(e.target.value)}
+                  // Solo se puede cambiar la ubicación desde el botón, así que no permitas cambios manuales
+                  onChange={(e) => {}} // No permitir cambios manuales
                   required
-                  className="border border-gray-300 rounded-lg p-2 mb-4 w-full max-w-xs"
-                />
-                <input
-                  type="number"
-                  placeholder="Número de Plaza"
-                  value={plazaNumber}
-                  onChange={(e) => setPlazaNumber(e.target.value)}
-                  required
-                  className="border border-gray-300 rounded-lg p-2 mb-4 w-full max-w-xs"
+                  disabled // Deshabilitar el campo de entrada
+                  className="border border-gray-300 rounded-lg p-2 mb-14 w-full max-w-xs"
                 />
                 <button
                   type="submit"
-                  className="bg-purple-600 text-white px-4 py-2 rounded-full border border-black hover:bg-purple-400 transition"
+                  className="bg-purple-400 text-white px-4 py-2 rounded-full border border-black hover:bg-purple-400 transition"
                 >
                   Enviar
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setLocation(""); // Limpiar la ubicación
+                    setCoordinates(null); // Limpiar las coordenadas
+                    setLocationCancelled(true); // Marcar que la ubicación fue cancelada
+                  }}
+                  className=" text-red px-2 py-2 rounded-full border border-black hover:bg-red-400 transition mb-4 mt-7"
+                >
+                  Cancelar
                 </button>
               </form>
             </div>
           )}
         </div>
       )}
-      <footer className="w-full bg-purple-500 p-4 mt-20 text-center text-white">
-        @grupo3 - 2024
-      </footer>
     </div>
   );
 };
 
-export default App;
+export default App;
