@@ -44,21 +44,6 @@ const App = () => {
     }
   };
 
-  const handleGetLocation = () => {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition((position) => {
-        const { latitude, longitude } = position.coords;
-        const newLocation = `Lat: ${latitude}, Long: ${longitude}`;
-
-        setLocation(newLocation);
-        setCoordinates([latitude, longitude]);
-        setLocationCancelled(false); // Resetea el estado de cancelado
-      });
-    } else {
-      alert("Geolocation is not supported by this browser.");
-    }
-  };
-
   return (
     <div className="min-h-screen flex flex-col items-center bg-gradient-to-b from-[#5a0dad] to-[#e0b3ff]">
       <nav className="w-full bg-purple-500 p-4 mb-16 rounded-md">
